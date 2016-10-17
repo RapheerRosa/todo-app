@@ -1,4 +1,5 @@
-var todo = angular.module('todo', ['ionic', 'HomeController']);
+var todo = angular.module('todo', ['ionic', 'Routes', 'AppController', 'LoginController', 'HomeController', 'ProfileController', 'TasksController',
+'AuthService']);
 
 todo.run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
@@ -11,66 +12,37 @@ todo.run(function($ionicPlatform) {
       StatusBar.styleDefault();
     }
   });
-})
+});
 
-todo.config(function ($stateProvider, $urlRouterProvider) {
+todo.constant('AUTH_EVENTS', {
+  notAuthenticated: 'auth-not-authenticated',
+  notAuthorized: 'auth-not-authorized'
+});
 
-  $stateProvider
-    .state('tabs', {
-      url: "/tab",
-      abstract: true,
-      templateUrl: "templates/tabs.html"
-    })
-    .state('tabs.home', {
-      url: "/home",
-      views: {
-        'home-tab': {
-          templateUrl: "templates/home.html",
-          controller: 'HomeTabCtrl'
-        }
-      }
-    })
-    .state('tabs.facts', {
-      url: "/facts",
-      views: {
-        'home-tab': {
-          templateUrl: "templates/facts.html"
-        }
-      }
-    })
-    .state('tabs.facts2', {
-      url: "/facts2",
-      views: {
-        'home-tab': {
-          templateUrl: "templates/facts2.html"
-        }
-      }
-    })
-    .state('tabs.about', {
-      url: "/about",
-      views: {
-        'about-tab': {
-          templateUrl: "templates/about.html"
-        }
-      }
-    })
-    .state('tabs.navstack', {
-      url: "/navstack",
-      views: {
-        'about-tab': {
-          templateUrl: "templates/nav-stack.html"
-        }
-      }
-    })
-    .state('tabs.contact', {
-      url: "/contact",
-      views: {
-        'contact-tab': {
-          templateUrl: "templates/contact.html"
-        }
-      }
-    });
+todo.constant('USER_ROLES', {
+  public: 'public_role'
+});
 
+todo.constant('SERVER_URL_AUTH', 'http://localhost:3030/authenticate');
+todo.constant('SERVER_URL_API', 'http://localhost:3030/api');
 
-   $urlRouterProvider.otherwise("/tab/home");
- });
+todo.run(function ($rootScope, $state, AuthService, AUTH_EVENTS) {
+  $rootScope.$on('$stateChangeStart', function (event, next, nextParams, fromState) {
+
+    if ('data' in next && 'authorizedRoles' in next.data) {
+      var authorizedRoles = next.data.authorizedRoles;
+      if (!AuthService.isAuthorized(authorizedRoles)) {
+        event.preventDefault();
+        $state.go($state.current, {}, {reload: true});
+        $rootScope.$broadcast(AUTH_EVENTS.notAuthorized);
+      }
+    }
+
+    if (!AuthService.isAuthenticated()) {
+      if (next.name !== 'login') {
+        event.preventDefault();
+        $state.go('login');
+      }
+    }
+  });
+});
