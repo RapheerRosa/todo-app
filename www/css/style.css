@@ -1,1 +1,32 @@
 /* Empty. Add your own CSS if you like */
+.float-button {
+  background-color:#ef473a;
+  opacity: 0.9;
+  color: white;
+  border-radius: 50%;
+  width: 30px;
+  padding: 30px;
+  font-size: 40px;
+  cursor: pointer;
+  position: fixed;
+  bottom: 8%;
+  right: 5%;
+  z-index: 1000;
+}
+
+.float-button .height_fix {
+  margin-top: 100%;
+  border: 1px solid red;
+}
+
+.float-button .content {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  font-size: 30px;
+  height: 100%;
+  width: 100%;
+  text-align: center;
+  margin-top: -20px;
+  color: white;
+}

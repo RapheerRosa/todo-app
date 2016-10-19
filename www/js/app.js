@@ -1,5 +1,6 @@
-var todo = angular.module('todo', ['ionic', 'Routes', 'AppController', 'LoginController', 'HomeController', 'ProfileController', 'TasksController',
-'AuthService']);
+var todo = angular.module('todo', ['ionic', 'Routes', 'ParentController', 'AppController',
+'LoginController', 'HomeController', 'ProfileController', 'TasksController', 'ShareDataService', 
+'AuthService', 'TasksService']);
 
 todo.run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
@@ -12,6 +13,11 @@ todo.run(function($ionicPlatform) {
       StatusBar.styleDefault();
     }
   });
+});
+
+todo.constant('HTTP_EVENTS', {
+  serverError: 'server-error',
+  notFound: 'not-found'
 });
 
 todo.constant('AUTH_EVENTS', {
@@ -45,4 +51,20 @@ todo.run(function ($rootScope, $state, AuthService, AUTH_EVENTS) {
       }
     }
   });
+});
+
+todo.factory('HttpInterceptor',
+function ($rootScope, $q, HTTP_EVENTS) {
+  return {
+    responseError: function (response) {
+      $rootScope.$broadcast({
+        500: HTTP_EVENTS.serverError,
+        404: HTTP_EVENTS.notFound
+      }[response.status], response);
+      return $q.reject(response);
+    }
+  }
+})
+.config(function ($httpProvider) {
+  $httpProvider.interceptors.push('HttpInterceptor');
 });

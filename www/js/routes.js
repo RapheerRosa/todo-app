@@ -18,7 +18,17 @@ angular.module('Routes', [])
           views: {
             'tasks-tab': {
               templateUrl: 'views/modules/tasks/main.html',
-              controller: 'TasksController'
+              controller: 'TasksListController'
+            }
+          }
+        })
+
+        .state('main.tasks.edit', {
+          url: '/main/tasks/edit',
+          views: {
+            'tasks-tab': {
+              templateUrl: 'views/modules/tasks/edit.html',
+              controller: 'TasksEditController'
             }
           }
         })

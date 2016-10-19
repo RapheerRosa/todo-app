@@ -21,14 +21,15 @@ function ($q, $http, USER_ROLES, SERVER_URL_AUTH) {
 
   function useCredentials(token) {
     var info = token.split('.');
-    username = info[0];
-    id = info[1];
+    username = info.splice(0, 1);
+    id = info.splice(0, 1);
     isAuthenticated = true;
-    authToken = info[2];
+    authToken = info.join('.');
 
     role = USER_ROLES.public;
 
-    $http.defaults.headers.common['X-Auth-Token'] = authToken;
+    $http.defaults.headers.common['x-access-token'] = authToken;
+    $http.defaults.headers.common['x-key'] = username;
   }
 
   function destroyUserCredentials() {
@@ -36,7 +37,8 @@ function ($q, $http, USER_ROLES, SERVER_URL_AUTH) {
     id = '';
     username = '';
     isAuthenticated = false;
-    $http.defaults.headers.common['X-Auth-Token'] = undefined;
+    $http.defaults.headers.common['x-access-token'] = undefined;
+    $http.defaults.headers.common['x-key'] = undefined;
     window.localStorage.removeItem(LOCAL_TOKEN_KEY);
   }
 

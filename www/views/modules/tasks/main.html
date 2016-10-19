@@ -1,4 +1,4 @@
-<ion-view view-title="Tarefas" name="dashboard-view">
+<ion-view view-title="Tarefas" name="task-view">
 
   <ion-nav-buttons side="left">
     <button class="button icon-left ion-person button-clear">&nbsp;{{username}}</button>
@@ -9,10 +9,39 @@
   </ion-nav-buttons>
 
   <ion-content class="padding">
+    <h4>Pendente</h4>
     <div class="row">
-      <div class="col text-center">
-        
+      <div class="col text-left">
+        <ion-list ng-show="counters.notDone > 0">
+          <ion-item ng-repeat="task in tasks" ng-click="toggleTask(task)" on-hold="taskSettings(task)" ng-if="!task.done">
+            {{task.title}}
+          </ion-item>
+        </ion-list>
+        <div ng-show="counters.notDone == 0">
+          <span class="text-muted">Não existem tarefas pendentes. Parabéns!</span>
+        </div>
+      </div>
+    </div>
+    <h4>Concluído</h4>
+    <div class="row">
+      <div class="col text-left">
+        <ion-list ng-show="counters.done > 0">
+          <ion-item class="text-muted" ng-repeat="task in tasks" ng-click="toggleTask(task)" on-hold="taskSettings(task)" ng-if="task.done">
+            <s>{{task.title}}</s>
+          </ion-item>
+        </ion-list>
+        <div ng-show="counters.done == 0">
+          <span class="text-muted">Nenhuma tarefa foi concluída ainda. Esforce-se!</span>
+        </div>
       </div>
     </div>
   </ion-content>
+
+  <div class="float-button">
+  	<span class="height-fix">
+  	  	<a class="button button-clear content" ng-click="addTask()">
+  	    	<i class="ion-plus"></i>
+  	   	</a>
+  	  </span>
+  </div>
 </ion-view>
